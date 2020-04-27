@@ -4,16 +4,14 @@ type
   EntryTypes {.pure} = enum
     overtime, spending
 
-  Commands = enum
+  Commands {.pure} = enum
     start, stop, spend, status
 
-  Entry = object
+  Entry = object of RootObj
     entryType: EntryTypes
     startTime: DateTime
 
-  FinishedEntry = object
-    entryType: EntryTypes
-    startTime: DateTime 
+  FinishedEntry = object of Entry
     endTime: DateTime 
 
   App = ref object
