@@ -1,4 +1,4 @@
-import times, os, strutils
+import times, os, strutils, json, strformat
 
 type
   EntryTypes {.pure} = enum
@@ -8,11 +8,20 @@ type
     start, stop, spend, status
 
   Entry = object
+    entryType: EntryTypes
     startTime: DateTime
 
   FinishedEntry = object
+    entryType: EntryTypes
     startTime: DateTime 
     endTime: DateTime 
+
+  App = ref object
+    currentEntry: ref Entry
+    entries: seq[FinishedEntry]
+
+proc execute(this: App, command: Commands) =
+  echo command
 
 
 proc getCommand(): Commands =
@@ -24,7 +33,20 @@ proc getCommand(): Commands =
 
   return parseEnum[Commands](params[0])
 
+proc getApp(): App =
+  let filename = "overtimer.json"
+  if not fileExists(filename):
+    echo fmt"{filename} not found, creating"
+    writeFile(filename, "{}")
+
+    return App()
+
+  return readFile(filename).parseJson().to(App)
+
 
 when isMainModule:
   let command = getCommand()
-  echo command
+  let app = getApp()
+
+  app.execute(command)
+
