@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 )
 
 type App struct {
@@ -16,5 +17,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("app: %+v", app)
+	fmt.Printf("app: %+v\n", app)
+	app.ActiveEntry = entry{
+		EntryType: overtime,
+		StartTime: time.Now(),
+	}
+	err = app.save()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
