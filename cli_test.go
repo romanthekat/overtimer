@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func Test_readCommandLineArg(t *testing.T) {
+func Test_parseArguments(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    []string
@@ -16,13 +16,13 @@ func Test_readCommandLineArg(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readCommandLineArg(tt.args)
+			got, err := parseArguments(tt.args)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("readCommandLineArg() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("parseArguments() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("readCommandLineArg() got = %v, want %v", got, tt.want)
+				t.Errorf("parseArguments() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -10,14 +10,15 @@ type commandLineArg string
 const (
 	start  commandLineArg = "start"
 	stop   commandLineArg = "stop"
+	spend  commandLineArg = "spend"
 	status commandLineArg = "status"
 )
 
-func readCommandLineArgOs() (commandLineArg, error) {
-	return readCommandLineArg(os.Args[1:])
+func readCommand() (commandLineArg, error) {
+	return parseArguments(os.Args[1:])
 }
 
-func readCommandLineArg(args []string) (commandLineArg, error) {
+func parseArguments(args []string) (commandLineArg, error) {
 	if len(args) > 1 {
 		return status, fmt.Errorf("only one parameter can be specified")
 	} else if len(args) == 0 {
@@ -26,11 +27,9 @@ func readCommandLineArg(args []string) (commandLineArg, error) {
 
 	command := commandLineArg(args[0])
 	switch command {
-	case start:
-		return start, nil
-	case stop:
-		return stop, nil
-	case status, "":
+	case start, stop, spend, status:
+		return command, nil
+	case "":
 		return status, nil
 	default:
 		return status, fmt.Errorf("unknown command provided")
