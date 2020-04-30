@@ -1,25 +1,20 @@
 package main
 
-import "time"
-
-type entryType string
-
-const (
-	overtime entryType = "overtime"
-	spending entryType = "spending"
+import (
+	"fmt"
+	"log"
 )
 
-type entry struct {
-	entryType entryType
-	startTime time.Time
-}
-
-type finishedEntry struct {
-	entry
-
-	endTime time.Time
+type App struct {
+	ActiveEntry     entry           `json:"active_entry,omitempty"`
+	FinishedEntries []finishedEntry `json:"finished_entries"`
 }
 
 func main() {
+	app, err := getApp()
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	fmt.Printf("app: %+v", app)
 }
