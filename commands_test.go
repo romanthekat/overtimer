@@ -30,19 +30,18 @@ func TestApp_calculateTotal(t *testing.T) {
 		{
 			name: "debt",
 			fields: fields{
-				ActiveEntry: *newEntry(overtime, time.Now().Add(-10*time.Second)),
 				FinishedEntries: []finishedEntry{
-					*newFinishedEntry(spending, time.Now().Add(-30*time.Second), time.Now()),
+					*newFinishedEntry(overtime, time.Now().Add(-30*time.Second), time.Now()),
 					*newFinishedEntry(spending, time.Now().Add(-70*time.Second), time.Now()),
 				}},
-			want:  -90 * time.Second,
+			want:  -40 * time.Second,
 			want1: hasDebt,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			app := &App{
-				ActiveEntry:     tt.fields.ActiveEntry,
+				ActiveEntry:     &tt.fields.ActiveEntry,
 				FinishedEntries: tt.fields.FinishedEntries,
 			}
 			got, got1 := app.calculateTotal()

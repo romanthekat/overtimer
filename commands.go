@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -22,11 +23,14 @@ func (app *App) calculateTotal() (time.Duration, totalType) {
 		}
 	}
 
-	activeDuration := time.Now().Sub(app.ActiveEntry.StartTime)
-	if app.ActiveEntry.EntryType == overtime {
-		result += activeDuration
-	} else if app.ActiveEntry.EntryType == spending {
-		result -= activeDuration
+	activeEntry := app.ActiveEntry
+	if activeEntry != nil {
+		activeDuration := time.Now().Sub(activeEntry.StartTime)
+		if activeEntry.EntryType == overtime {
+			result += activeDuration
+		} else if activeEntry.EntryType == spending {
+			result -= activeDuration
+		}
 	}
 
 	result = result.Round(time.Second)
@@ -35,4 +39,45 @@ func (app *App) calculateTotal() (time.Duration, totalType) {
 	} else {
 		return result, hasDebt
 	}
+}
+
+func (app *App) start() bool {
+	if app.ActiveEntry == nil {
+		app.ActiveEntry = newEntry(overtime, time.Now())
+		return true
+	}
+
+	return false
+}
+
+func (app *App) stop() (entryType, error) {
+	finishedEntry := app.finishActive()
+	if finishedEntry != nil {
+		return finishedEntry.EntryType, nil
+	} else {
+		return "", fmt.Errorf("no active entry found - can't perform stop")
+	}
+}
+
+func (app *App) finishActive() *finishedEntry {
+	activeEntry := app.ActiveEntry
+	if activeEntry != nil {
+		finishedEntry := newFinishedEntry(activeEntry.EntryType, activeEntry.StartTime, time.Now())
+		app.FinishedEntries = append(app.FinishedEntries, *finishedEntry)
+		app.ActiveEntry = nil
+		return finishedEntry
+	} else {
+		return nil
+	}
+}
+
+func (app *App) spend() bool {
+	if app.ActiveEntry != nil && app.ActiveEntry.EntryType == spending {
+		return false
+	}
+
+	app.finishActive()
+
+	app.ActiveEntry = newEntry(spending, time.Now())
+	return true
 }
