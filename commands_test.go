@@ -19,25 +19,10 @@ func TestApp_calculateTotal(t *testing.T) {
 		{
 			name: "overtime",
 			fields: fields{
-				ActiveEntry: entry{
-					EntryType: spending,
-					StartTime: time.Now().Add(-10 * time.Second),
-				},
+				ActiveEntry: *newEntry(spending, time.Now().Add(-10*time.Second)),
 				FinishedEntries: []finishedEntry{
-					{
-						entry: entry{
-							EntryType: overtime,
-							StartTime: time.Now().Add(-30 * time.Second),
-						},
-						EndTime: time.Now(),
-					},
-					{
-						entry: entry{
-							EntryType: overtime,
-							StartTime: time.Now().Add(-70 * time.Second),
-						},
-						EndTime: time.Now(),
-					},
+					*newFinishedEntry(overtime, time.Now().Add(-30*time.Second), time.Now()),
+					*newFinishedEntry(overtime, time.Now().Add(-70*time.Second), time.Now()),
 				}},
 			want:  90 * time.Second,
 			want1: hasOvertime,
@@ -45,25 +30,10 @@ func TestApp_calculateTotal(t *testing.T) {
 		{
 			name: "debt",
 			fields: fields{
-				ActiveEntry: entry{
-					EntryType: overtime,
-					StartTime: time.Now().Add(-10 * time.Second),
-				},
+				ActiveEntry: *newEntry(overtime, time.Now().Add(-10*time.Second)),
 				FinishedEntries: []finishedEntry{
-					{
-						entry: entry{
-							EntryType: spending,
-							StartTime: time.Now().Add(-30 * time.Second),
-						},
-						EndTime: time.Now(),
-					},
-					{
-						entry: entry{
-							EntryType: spending,
-							StartTime: time.Now().Add(-70 * time.Second),
-						},
-						EndTime: time.Now(),
-					},
+					*newFinishedEntry(spending, time.Now().Add(-30*time.Second), time.Now()),
+					*newFinishedEntry(spending, time.Now().Add(-70*time.Second), time.Now()),
 				}},
 			want:  -90 * time.Second,
 			want1: hasDebt,
