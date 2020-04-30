@@ -17,6 +17,10 @@ type entry struct {
 	StartTime time.Time `json:"start_time"`
 }
 
+func newEntry(entryType entryType, startTime time.Time) *entry {
+	return &entry{EntryType: entryType, StartTime: startTime}
+}
+
 func (e entry) String() string {
 	return fmt.Sprintf("Active %v since %v", e.EntryType, e.StartTime)
 }
@@ -24,6 +28,10 @@ func (e entry) String() string {
 type finishedEntry struct {
 	entry
 	EndTime time.Time `json:"end_time"`
+}
+
+func newFinishedEntry(entryType entryType, startTime time.Time, endTime time.Time) *finishedEntry {
+	return &finishedEntry{entry: *newEntry(entryType, startTime), EndTime: endTime}
 }
 
 func (f finishedEntry) String() string {
