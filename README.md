@@ -17,3 +17,8 @@ overtime started at 2020-05-01T01:14:57+03:00
 
 - `overtimer spend` - start spending time
 - `overtimer stop` - stop overtime/spending time
+
+## build
+`go build romangaranin.dev/overtimer`
+or
+`go install romangaranin.dev/overtimer`
