@@ -54,3 +54,47 @@ func TestApp_calculateTotal(t *testing.T) {
 		})
 	}
 }
+
+func TestApp_StartStop(t *testing.T) {
+	//given
+	app := NewApp(nil, []finishedEntry{})
+
+	//when
+	app.start()
+	entryType, err := app.stop()
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if entryType != overtime {
+		t.Errorf("app start/stop entry type, got %v, want %v", entryType, overtime)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("app start/stop entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+}
+
+func TestApp_SpendStop(t *testing.T) {
+	//given
+	app := NewApp(nil, []finishedEntry{})
+
+	//when
+	app.spend()
+	entryType, err := app.stop()
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if entryType != spending {
+		t.Errorf("app spend/stop entry type, got %v, want %v", entryType, spending)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("app spend/stop entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+}

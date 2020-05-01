@@ -11,6 +11,10 @@ type App struct {
 	FinishedEntries []finishedEntry `json:"finished_entries"`
 }
 
+func NewApp(activeEntry *entry, finishedEntries []finishedEntry) *App {
+	return &App{ActiveEntry: activeEntry, FinishedEntries: finishedEntries}
+}
+
 func (app *App) String() string {
 	total, totalType := app.calculateTotal()
 	if totalType == hasOvertime {
