@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 )
@@ -58,6 +59,8 @@ func createNewConfigFile() (*os.File, error) {
 	}
 
 	_, err = jsonFile.WriteString("{}")
+	jsonFile.Seek(0, io.SeekStart)
+
 	if err != nil {
 		return nil, err
 	}
