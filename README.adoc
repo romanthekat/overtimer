@@ -25,6 +25,6 @@ overtime started at 2020-05-01T01:14:57+03:00
 
 == build
 
-`go build romangaranin.dev/overtimer`
+`go build github.com/EvilKhaosKat/overtimer`
 or
-`go install romangaranin.dev/overtimer`
+`go install github.com/EvilKhaosKat/overtimer`
