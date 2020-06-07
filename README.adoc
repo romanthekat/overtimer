@@ -23,6 +23,8 @@ overtime started at 2020-05-01T01:14:57+03:00
 
 * `overtimer stop` - stop overtime/spending time
 
+* `overtimer routine` - add overtime or spending entry depending on current time in comparison with json settings of start/end work hour
+
 == build
 
 `go build github.com/EvilKhaosKat/overtimer`

@@ -62,13 +62,18 @@ func (app *App) stop() (entryType, error) {
 func (app *App) finishActive() *finishedEntry {
 	activeEntry := app.ActiveEntry
 	if activeEntry != nil {
-		finishedEntry := newFinishedEntry(activeEntry.EntryType, activeEntry.StartTime, time.Now())
-		app.FinishedEntries = append(app.FinishedEntries, *finishedEntry)
+		finishedEntry := app.addEntry(activeEntry.EntryType, activeEntry.StartTime, time.Now())
 		app.ActiveEntry = nil
 		return finishedEntry
 	} else {
 		return nil
 	}
+}
+
+func (app *App) addEntry(t entryType, startTime time.Time, endTime time.Time) *finishedEntry {
+	finishedEntry := newFinishedEntry(t, startTime, endTime)
+	app.FinishedEntries = append(app.FinishedEntries, *finishedEntry)
+	return finishedEntry
 }
 
 func (app *App) spend() bool {
@@ -80,4 +85,35 @@ func (app *App) spend() bool {
 
 	app.ActiveEntry = newEntry(spending, time.Now())
 	return true
+}
+
+func (app *App) routine() (string, error) {
+	return app.routineAt(time.Now())
+}
+
+func (app *App) routineAt(t time.Time) (string, error) {
+	if app.ActiveEntry != nil {
+		return "", fmt.Errorf("active entry exists, routine cannot be performed automatically")
+	}
+
+	startTime := newDate(t, app.Settings.WorkStartHour)
+	endTime := newDate(t, app.Settings.WorkEndHour)
+
+	switch {
+	case t.Before(startTime):
+		app.addEntry(overtime, t, startTime)
+		return fmt.Sprintf("overtime till %s added", startTime), nil
+	case t.After(startTime) && t.Before(endTime):
+		app.addEntry(spending, startTime, t)
+		return fmt.Sprintf("spending from %s added", startTime), nil
+	case t.After(endTime):
+		app.addEntry(overtime, endTime, t)
+		return fmt.Sprintf("overtime from %s added", endTime), nil
+	default:
+		return "nothing performed", nil
+	}
+}
+
+func newDate(t time.Time, hour int) time.Time {
+	return time.Date(t.Year(), t.Month(), t.Day(), hour, 0, 0, 0, t.Location())
 }
