@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -96,5 +97,95 @@ func TestApp_SpendStop(t *testing.T) {
 
 	if len(app.FinishedEntries) != 1 {
 		t.Errorf("app spend/stop entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+}
+
+func TestApp_RoutineStartedEarly(t *testing.T) {
+	//given
+	app := NewAppDefault()
+
+	//when
+	result, err := app.routineAt(newDate(time.Now(), DefaultWorkStartHour-1))
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !strings.Contains(result, "till") {
+		t.Errorf("routine early, got %v, want 'overtime till'", result)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("routine early entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+
+	entry := app.FinishedEntries[0]
+	if entry.EntryType != overtime {
+		t.Errorf("routine early type, got %s, want %s", entry.EntryType, overtime)
+	}
+
+	if entry.getDuration().Seconds() < 1*60*60-1 {
+		t.Errorf("routine early duration, got %s, want about hour", entry.getDuration())
+	}
+}
+
+func TestApp_RoutineStartedLate(t *testing.T) {
+	//given
+	app := NewAppDefault()
+
+	//when
+	result, err := app.routineAt(newDate(time.Now(), DefaultWorkStartHour+1))
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !strings.Contains(result, "spending") {
+		t.Errorf("routine late, got %v, want 'overtime till'", result)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("routine late entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+
+	entry := app.FinishedEntries[0]
+	if entry.EntryType != spending {
+		t.Errorf("routine late type, got %s, want %s", entry.EntryType, spending)
+	}
+
+	if entry.getDuration().Seconds() < 1*60*60-1 {
+		t.Errorf("routine late duration, got %s, want about hour", entry.getDuration())
+	}
+}
+
+func TestApp_RoutineEndedLate(t *testing.T) {
+	//given
+	app := NewAppDefault()
+
+	//when
+	result, err := app.routineAt(newDate(time.Now(), DefaultWorkEndHour+1))
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !strings.Contains(result, "overtime") {
+		t.Errorf("routine late, got %v, want 'overtime till'", result)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("routine late entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+
+	entry := app.FinishedEntries[0]
+	if entry.EntryType != overtime {
+		t.Errorf("routine late type, got %s, want %s", entry.EntryType, spending)
+	}
+
+	if entry.getDuration().Seconds() < 1*60*60-1 {
+		t.Errorf("routine late duration, got %s, want about hour", entry.getDuration())
 	}
 }
