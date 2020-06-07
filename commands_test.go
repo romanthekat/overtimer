@@ -100,7 +100,7 @@ func TestApp_SpendStop(t *testing.T) {
 	}
 }
 
-func TestApp_RoutineStartedEarly(t *testing.T) {
+func TestApp_RoutineStartEarly(t *testing.T) {
 	//given
 	app := NewAppDefault()
 
@@ -130,7 +130,7 @@ func TestApp_RoutineStartedEarly(t *testing.T) {
 	}
 }
 
-func TestApp_RoutineStartedLate(t *testing.T) {
+func TestApp_RoutineStartLate(t *testing.T) {
 	//given
 	app := NewAppDefault()
 
@@ -160,7 +160,36 @@ func TestApp_RoutineStartedLate(t *testing.T) {
 	}
 }
 
-func TestApp_RoutineEndedLate(t *testing.T) {
+func TestApp_RoutineFinishEarly(t *testing.T) {
+	//given
+	app := NewAppDefault()
+
+	//when
+	result, err := app.routineAt(newDate(time.Now(), DefaultWorkEndHour-1))
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !strings.Contains(result, "spending") {
+		t.Errorf("routine finish early, got %v, want 'overtime till'", result)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("routine finish early entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+
+	entry := app.FinishedEntries[0]
+	if entry.EntryType != spending {
+		t.Errorf("routine finish early type, got %s, want %s", entry.EntryType, spending)
+	}
+
+	if entry.getDuration().Seconds() < 1*60*60-1 {
+		t.Errorf("routine late duration, got %s, want about hour", entry.getDuration())
+	}
+}
+func TestApp_RoutineFinishLate(t *testing.T) {
 	//given
 	app := NewAppDefault()
 
@@ -182,7 +211,7 @@ func TestApp_RoutineEndedLate(t *testing.T) {
 
 	entry := app.FinishedEntries[0]
 	if entry.EntryType != overtime {
-		t.Errorf("routine late type, got %s, want %s", entry.EntryType, spending)
+		t.Errorf("routine late type, got %s, want %s", entry.EntryType, overtime)
 	}
 
 	if entry.getDuration().Seconds() < 1*60*60-1 {
