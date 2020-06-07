@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+const (
+	DefaultWorkStartHour = 10
+	DefaultWorkEndHour   = 19
+)
+
 type App struct {
 	Settings        *Settings       `json:"Settings"`
 	ActiveEntry     *Entry          `json:"active_entry,omitempty"`
@@ -18,8 +23,8 @@ func NewApp(currentSettings *Settings, activeEntry *Entry, finishedEntries []Fin
 
 func NewAppDefault() *App {
 	return &App{Settings: &Settings{
-		WorkStartHour: 10,
-		WorkEndHour:   19,
+		WorkStartHour: DefaultWorkStartHour,
+		WorkEndHour:   DefaultWorkEndHour,
 	}}
 }
 
