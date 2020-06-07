@@ -57,7 +57,7 @@ func TestApp_calculateTotal(t *testing.T) {
 
 func TestApp_StartStop(t *testing.T) {
 	//given
-	app := NewApp(nil, []finishedEntry{})
+	app := NewApp(nil, nil, []finishedEntry{})
 
 	//when
 	app.start()
@@ -79,7 +79,7 @@ func TestApp_StartStop(t *testing.T) {
 
 func TestApp_SpendStop(t *testing.T) {
 	//given
-	app := NewApp(nil, []finishedEntry{})
+	app := NewApp(nil, nil, []finishedEntry{})
 
 	//when
 	app.spend()

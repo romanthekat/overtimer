@@ -8,10 +8,11 @@ import (
 type commandLineArg string
 
 const (
-	start  commandLineArg = "start"
-	stop   commandLineArg = "stop"
-	spend  commandLineArg = "spend"
-	status commandLineArg = "status"
+	start   commandLineArg = "start"
+	stop    commandLineArg = "stop"
+	spend   commandLineArg = "spend"
+	routine commandLineArg = "routine"
+	status  commandLineArg = "status"
 )
 
 func readCommand() (commandLineArg, error) {
@@ -27,7 +28,7 @@ func parseArguments(args []string) (commandLineArg, error) {
 
 	command := commandLineArg(args[0])
 	switch command {
-	case start, stop, spend, status:
+	case start, stop, spend, routine, status:
 		return command, nil
 	case "":
 		return status, nil

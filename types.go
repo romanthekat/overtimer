@@ -7,6 +7,11 @@ import (
 
 type entryType string
 
+type settings struct {
+	WorkStartHour int `json:"work_start_hour"`
+	WorkEndHour   int `json:"work_end_hour"`
+}
+
 const (
 	overtime entryType = "overtime"
 	spending entryType = "spending"

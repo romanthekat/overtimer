@@ -22,14 +22,14 @@ func getApp() (*App, error) {
 		return nil, err
 	}
 
-	var app App
+	var app = NewAppDefault()
 	err = json.Unmarshal(bytes, &app)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &app, nil
+	return app, nil
 }
 
 func openConfigFile() (*os.File, error) {
