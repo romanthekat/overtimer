@@ -7,17 +7,17 @@ import (
 )
 
 type App struct {
-	Settings        *settings       `json:"settings"`
-	ActiveEntry     *entry          `json:"active_entry,omitempty"`
-	FinishedEntries []finishedEntry `json:"finished_entries"`
+	Settings        *Settings       `json:"Settings"`
+	ActiveEntry     *Entry          `json:"active_entry,omitempty"`
+	FinishedEntries []FinishedEntry `json:"finished_entries"`
 }
 
-func NewApp(currentSettings *settings, activeEntry *entry, finishedEntries []finishedEntry) *App {
+func NewApp(currentSettings *Settings, activeEntry *Entry, finishedEntries []FinishedEntry) *App {
 	return &App{Settings: currentSettings, ActiveEntry: activeEntry, FinishedEntries: finishedEntries}
 }
 
 func NewAppDefault() *App {
-	return &App{Settings: &settings{
+	return &App{Settings: &Settings{
 		WorkStartHour: 10,
 		WorkEndHour:   19,
 	}}
