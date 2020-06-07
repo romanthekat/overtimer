@@ -102,13 +102,13 @@ func (app *App) routineAt(t time.Time) (string, error) {
 	switch {
 	case t.Before(startTime):
 		app.addEntry(overtime, t, startTime)
-		return fmt.Sprintf("overtime till %s added", startTime), nil
+		return fmt.Sprintf("overtime till %s added\n%s", startTime, app), nil
 	case t.After(startTime) && t.Before(endTime):
 		app.addEntry(spending, startTime, t)
-		return fmt.Sprintf("spending from %s added", startTime), nil
+		return fmt.Sprintf("spending from %s added\n%s", startTime, app), nil
 	case t.After(endTime):
 		app.addEntry(overtime, endTime, t)
-		return fmt.Sprintf("overtime from %s added", endTime), nil
+		return fmt.Sprintf("overtime from %s added\n%s", endTime, app), nil
 	default:
 		return "nothing performed", nil
 	}
