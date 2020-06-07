@@ -7,8 +7,8 @@ import (
 
 func TestApp_calculateTotal(t *testing.T) {
 	type fields struct {
-		ActiveEntry     entry
-		FinishedEntries []finishedEntry
+		ActiveEntry     Entry
+		FinishedEntries []FinishedEntry
 	}
 	tests := []struct {
 		name   string
@@ -20,7 +20,7 @@ func TestApp_calculateTotal(t *testing.T) {
 			name: "overtime",
 			fields: fields{
 				ActiveEntry: *newEntry(spending, time.Now().Add(-10*time.Second)),
-				FinishedEntries: []finishedEntry{
+				FinishedEntries: []FinishedEntry{
 					*newFinishedEntry(overtime, time.Now().Add(-30*time.Second), time.Now()),
 					*newFinishedEntry(overtime, time.Now().Add(-70*time.Second), time.Now()),
 				}},
@@ -30,7 +30,7 @@ func TestApp_calculateTotal(t *testing.T) {
 		{
 			name: "debt",
 			fields: fields{
-				FinishedEntries: []finishedEntry{
+				FinishedEntries: []FinishedEntry{
 					*newFinishedEntry(overtime, time.Now().Add(-30*time.Second), time.Now()),
 					*newFinishedEntry(spending, time.Now().Add(-70*time.Second), time.Now()),
 				}},
@@ -57,7 +57,7 @@ func TestApp_calculateTotal(t *testing.T) {
 
 func TestApp_StartStop(t *testing.T) {
 	//given
-	app := NewApp(nil, nil, []finishedEntry{})
+	app := NewApp(nil, nil, []FinishedEntry{})
 
 	//when
 	app.start()
@@ -69,7 +69,7 @@ func TestApp_StartStop(t *testing.T) {
 	}
 
 	if entryType != overtime {
-		t.Errorf("app start/stop entry type, got %v, want %v", entryType, overtime)
+		t.Errorf("app start/stop Entry type, got %v, want %v", entryType, overtime)
 	}
 
 	if len(app.FinishedEntries) != 1 {
@@ -79,7 +79,7 @@ func TestApp_StartStop(t *testing.T) {
 
 func TestApp_SpendStop(t *testing.T) {
 	//given
-	app := NewApp(nil, nil, []finishedEntry{})
+	app := NewApp(nil, nil, []FinishedEntry{})
 
 	//when
 	app.spend()
@@ -91,7 +91,7 @@ func TestApp_SpendStop(t *testing.T) {
 	}
 
 	if entryType != spending {
-		t.Errorf("app spend/stop entry type, got %v, want %v", entryType, spending)
+		t.Errorf("app spend/stop Entry type, got %v, want %v", entryType, spending)
 	}
 
 	if len(app.FinishedEntries) != 1 {

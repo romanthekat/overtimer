@@ -50,16 +50,16 @@ func (app *App) start() bool {
 	return false
 }
 
-func (app *App) stop() (entryType, error) {
+func (app *App) stop() (EntryType, error) {
 	finishedEntry := app.finishActive()
 	if finishedEntry != nil {
 		return finishedEntry.EntryType, nil
 	} else {
-		return "", fmt.Errorf("no active entry found - can't perform stop")
+		return "", fmt.Errorf("no active Entry found - can't perform stop")
 	}
 }
 
-func (app *App) finishActive() *finishedEntry {
+func (app *App) finishActive() *FinishedEntry {
 	activeEntry := app.ActiveEntry
 	if activeEntry != nil {
 		finishedEntry := app.addEntry(activeEntry.EntryType, activeEntry.StartTime, time.Now())
@@ -70,7 +70,7 @@ func (app *App) finishActive() *finishedEntry {
 	}
 }
 
-func (app *App) addEntry(t entryType, startTime time.Time, endTime time.Time) *finishedEntry {
+func (app *App) addEntry(t EntryType, startTime time.Time, endTime time.Time) *FinishedEntry {
 	finishedEntry := newFinishedEntry(t, startTime, endTime)
 	app.FinishedEntries = append(app.FinishedEntries, *finishedEntry)
 	return finishedEntry
@@ -93,7 +93,7 @@ func (app *App) routine() (string, error) {
 
 func (app *App) routineAt(t time.Time) (string, error) {
 	if app.ActiveEntry != nil {
-		return "", fmt.Errorf("active entry exists, routine cannot be performed automatically")
+		return "", fmt.Errorf("active Entry exists, routine cannot be performed automatically")
 	}
 
 	startTime := newDate(t, app.Settings.WorkStartHour)
