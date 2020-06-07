@@ -12,7 +12,7 @@ const (
 )
 
 type App struct {
-	Settings        *Settings       `json:"Settings"`
+	Settings        *Settings       `json:"settings"`
 	ActiveEntry     *Entry          `json:"active_entry,omitempty"`
 	FinishedEntries []FinishedEntry `json:"finished_entries"`
 }
