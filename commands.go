@@ -103,7 +103,7 @@ func (app *App) routineAt(t time.Time) (string, error) {
 	case t.Before(startTime):
 		app.addEntry(overtime, t, startTime)
 		return fmt.Sprintf("overtime till %s added\n%s", startTime, app), nil
-	case t.After(startTime) && t.Before(endTime):
+	case t.After(startTime) && t.Before(endTime) && t.Sub(startTime) < endTime.Sub(t):
 		app.addEntry(spending, startTime, t)
 		return fmt.Sprintf("spending from %s added\n%s", startTime, app), nil
 	case t.After(startTime) && t.Before(endTime) && t.Sub(startTime) > endTime.Sub(t):

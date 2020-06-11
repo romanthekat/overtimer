@@ -135,7 +135,8 @@ func TestApp_RoutineStartLate(t *testing.T) {
 	app := NewAppDefault()
 
 	//when
-	result, err := app.routineAt(newDate(time.Now(), DefaultWorkStartHour+1))
+	nowAfterStartHour := newDate(time.Now(), DefaultWorkStartHour+1)
+	result, err := app.routineAt(nowAfterStartHour)
 
 	//then
 	if err != nil {
@@ -158,6 +159,10 @@ func TestApp_RoutineStartLate(t *testing.T) {
 	if entry.getDuration().Seconds() < 1*60*60-1 {
 		t.Errorf("routine late duration, got %s, want about hour", entry.getDuration())
 	}
+
+	if entry.EndTime != nowAfterStartHour {
+		t.Errorf("routine late end time, got %s, want %s", entry.EndTime, nowAfterStartHour)
+	}
 }
 
 func TestApp_RoutineFinishEarly(t *testing.T) {
@@ -165,7 +170,8 @@ func TestApp_RoutineFinishEarly(t *testing.T) {
 	app := NewAppDefault()
 
 	//when
-	result, err := app.routineAt(newDate(time.Now(), DefaultWorkEndHour-1))
+	nowBeforeEndHour := newDate(time.Now(), app.Settings.WorkEndHour-1)
+	result, err := app.routineAt(nowBeforeEndHour)
 
 	//then
 	if err != nil {
@@ -186,7 +192,11 @@ func TestApp_RoutineFinishEarly(t *testing.T) {
 	}
 
 	if entry.getDuration().Seconds() < 1*60*60-1 {
-		t.Errorf("routine late duration, got %s, want about hour", entry.getDuration())
+		t.Errorf("routine finish early duration, got %s, want about hour", entry.getDuration())
+	}
+
+	if entry.StartTime != nowBeforeEndHour {
+		t.Errorf("routine finish early start time, got %s, want %s", entry.StartTime, nowBeforeEndHour)
 	}
 }
 func TestApp_RoutineFinishLate(t *testing.T) {
