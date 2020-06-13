@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"strings"
 	"testing"
 	"time"
@@ -125,8 +126,8 @@ func TestApp_RoutineStartEarly(t *testing.T) {
 		t.Errorf("routine early type, got %s, want %s", entry.EntryType, overtime)
 	}
 
-	if entry.getDuration().Seconds() < 1*60*60-1 {
-		t.Errorf("routine early duration, got %s, want about hour", entry.getDuration())
+	if !equals(entry.getDuration().Seconds(), 3600) {
+		t.Errorf("routine early duration, got %s, want an hour", entry.getDuration())
 	}
 }
 
@@ -156,8 +157,8 @@ func TestApp_RoutineStartLate(t *testing.T) {
 		t.Errorf("routine late type, got %s, want %s", entry.EntryType, spending)
 	}
 
-	if entry.getDuration().Seconds() < 1*60*60-1 {
-		t.Errorf("routine late duration, got %s, want about hour", entry.getDuration())
+	if !equals(entry.getDuration().Seconds(), 3600) {
+		t.Errorf("routine late duration, got %s, want an hour", entry.getDuration())
 	}
 
 	if entry.EndTime != nowAfterStartHour {
@@ -191,8 +192,8 @@ func TestApp_RoutineFinishEarly(t *testing.T) {
 		t.Errorf("routine finish early type, got %s, want %s", entry.EntryType, spending)
 	}
 
-	if entry.getDuration().Seconds() < 1*60*60-1 {
-		t.Errorf("routine finish early duration, got %s, want about hour", entry.getDuration())
+	if !equals(entry.getDuration().Seconds(), 3600) {
+		t.Errorf("routine finish early duration, got %s, want an hour", entry.getDuration())
 	}
 
 	if entry.StartTime != nowBeforeEndHour {
@@ -224,7 +225,11 @@ func TestApp_RoutineFinishLate(t *testing.T) {
 		t.Errorf("routine late type, got %s, want %s", entry.EntryType, overtime)
 	}
 
-	if entry.getDuration().Seconds() < 1*60*60-1 {
-		t.Errorf("routine late duration, got %s, want about hour", entry.getDuration())
+	if !equals(entry.getDuration().Seconds(), 3600) {
+		t.Errorf("routine late duration, got %s, want an hour", entry.getDuration())
 	}
+}
+
+func equals(first, second float64) bool {
+	return math.Abs(first-second) < 0.00001
 }
