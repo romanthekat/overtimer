@@ -63,7 +63,11 @@ func main() {
 		}
 		fmt.Printf("%v stopped at %v", entryType, nowTimeFormatted())
 	case spend:
-		started := app.spend()
+		started, err := app.spend()
+		if err != nil {
+			log.Fatal("error occurred during spending: ", err)
+		}
+
 		if started {
 			fmt.Println("time spending started at", nowTimeFormatted())
 		} else {
@@ -77,6 +81,15 @@ func main() {
 		fmt.Printf("%s", result)
 	case status:
 		fmt.Println(app)
+	case lunch:
+		started := app.lunch()
+		if started {
+			fmt.Println("lunch started at", nowTimeFormatted())
+		} else {
+			fmt.Println("lunch is already in progress")
+		}
+	default:
+		log.Fatal("unsupported command $s", command)
 	}
 
 	err = app.save()

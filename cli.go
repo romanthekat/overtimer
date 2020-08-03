@@ -12,6 +12,7 @@ const (
 	stop    commandLineArg = "stop"
 	spend   commandLineArg = "spend"
 	routine commandLineArg = "routine"
+	lunch   commandLineArg = "lunch"
 	status  commandLineArg = "status"
 )
 
@@ -28,11 +29,11 @@ func parseArguments(args []string) (commandLineArg, error) {
 
 	command := commandLineArg(args[0])
 	switch command {
-	case start, stop, spend, routine, status:
+	case start, stop, spend, routine, lunch, status:
 		return command, nil
 	case "":
 		return status, nil
 	default:
-		return status, fmt.Errorf("unknown command provided")
+		return status, fmt.Errorf("unknown command provided") //enforce commands explicitly added here or error
 	}
 }
