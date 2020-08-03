@@ -10,6 +10,7 @@ type EntryType string
 const (
 	overtime EntryType = "overtime"
 	spending EntryType = "spending"
+	lunching EntryType = "lunching"
 )
 
 type Entry struct {

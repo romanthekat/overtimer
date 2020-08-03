@@ -51,22 +51,46 @@ func (app *App) start() bool {
 }
 
 func (app *App) stop() (EntryType, error) {
-	finishedEntry := app.finishActive()
-	if finishedEntry != nil {
-		return finishedEntry.EntryType, nil
-	} else {
+	finishedEntry, err := app.finishActive()
+	if err != nil {
 		return "", fmt.Errorf("no active Entry found - can't perform stop")
+	}
+
+	return finishedEntry.EntryType, nil
+}
+
+func (app *App) finishActive() (*FinishedEntry, error) {
+	activeEntry := app.ActiveEntry
+	if activeEntry != nil {
+		if activeEntry.EntryType == lunching { //TODO migrate this logic on type?
+			return app.finishLunching(activeEntry)
+		} else {
+			return app.finishGenericEntry(activeEntry)
+		}
+	} else {
+		return nil, fmt.Errorf("no active entry found")
 	}
 }
 
-func (app *App) finishActive() *FinishedEntry {
-	activeEntry := app.ActiveEntry
-	if activeEntry != nil {
-		finishedEntry := app.addEntry(activeEntry.EntryType, activeEntry.StartTime, time.Now())
-		app.ActiveEntry = nil
-		return finishedEntry
+func (app *App) finishGenericEntry(activeEntry *Entry) (*FinishedEntry, error) {
+	finishedEntry := app.addEntry(activeEntry.EntryType, activeEntry.StartTime, time.Now())
+	app.ActiveEntry = nil
+	return finishedEntry, nil
+}
+
+func (app *App) finishLunching(activeEntry *Entry) (*FinishedEntry, error) {
+	activeEntry = app.ActiveEntry
+	app.ActiveEntry = nil
+
+	now := time.Now()
+
+	delta := now.Sub(activeEntry.StartTime)
+	lunchEndTime := activeEntry.StartTime.Add(1 * time.Hour)
+
+	if delta.Minutes() > 60 {
+		return app.addEntry(spending, lunchEndTime, now), nil
 	} else {
-		return nil
+		return app.addEntry(overtime, now, lunchEndTime), nil
 	}
 }
 
@@ -76,15 +100,18 @@ func (app *App) addEntry(t EntryType, startTime time.Time, endTime time.Time) *F
 	return finishedEntry
 }
 
-func (app *App) spend() bool {
+func (app *App) spend() (bool, error) {
 	if app.ActiveEntry != nil && app.ActiveEntry.EntryType == spending {
-		return false
+		return false, nil
 	}
 
-	app.finishActive()
+	_, err := app.finishActive()
+	if err != nil {
+		return false, fmt.Errorf("error during spend command, finish active entry failed with %s", err)
+	}
 
 	app.ActiveEntry = newEntry(spending, time.Now())
-	return true
+	return true, nil
 }
 
 func (app *App) routine() (string, error) {
@@ -119,4 +146,13 @@ func (app *App) routineAt(t time.Time) (string, error) {
 
 func newDate(t time.Time, hour int) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), hour, 0, 0, 0, t.Location())
+}
+
+func (app *App) lunch() bool {
+	if app.ActiveEntry == nil {
+		app.ActiveEntry = newEntry(lunching, time.Now())
+		return true
+	}
+
+	return false
 }
