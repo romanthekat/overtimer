@@ -200,6 +200,7 @@ func TestApp_RoutineFinishEarly(t *testing.T) {
 		t.Errorf("routine finish early start time, got %s, want %s", entry.StartTime, nowBeforeEndHour)
 	}
 }
+
 func TestApp_RoutineFinishLate(t *testing.T) {
 	//given
 	app := NewAppDefault()
@@ -227,6 +228,84 @@ func TestApp_RoutineFinishLate(t *testing.T) {
 
 	if !equals(entry.getDuration().Seconds(), 3600) {
 		t.Errorf("routine late duration, got %s, want an hour", entry.getDuration())
+	}
+}
+
+func TestApp_LunchFinishEarly(t *testing.T) {
+	//given
+	app := NewApp(nil, nil, []FinishedEntry{})
+
+	//when
+	lunchStarted := app.lunch()
+	if !lunchStarted {
+		t.Fatal("lunch finish early, lunch wasn't started")
+	}
+
+	const minutesAgo = 42
+	app.ActiveEntry.StartTime = time.Now().Add(-minutesAgo * time.Minute)
+
+	if app.ActiveEntry.EntryType != lunching {
+		t.Fatalf("lunch finish early, active Entry type, got %v, want %v", app.ActiveEntry.EntryType, lunching)
+	}
+
+	entryType, err := app.stop()
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if entryType != overtime {
+		t.Errorf("lunch finish early, Entry type, got %v, want %v", entryType, overtime)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("lunch finish early, entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+
+	entry := app.FinishedEntries[0]
+	var overtimeSeconds float64 = (60 - minutesAgo) * 60
+	if !equals(entry.getDuration().Seconds(), overtimeSeconds) {
+		t.Errorf("lunch finish early,  duration, got %s, want %f seconds", entry.getDuration(), overtimeSeconds)
+	}
+}
+
+func TestApp_LunchFinishLate(t *testing.T) {
+	//given
+	app := NewApp(nil, nil, []FinishedEntry{})
+
+	//when
+	lunchStarted := app.lunch()
+	if !lunchStarted {
+		t.Fatal("lunch finish late, lunch wasn't started")
+	}
+
+	const minutesAgo = 64
+	app.ActiveEntry.StartTime = time.Now().Add(-minutesAgo * time.Minute)
+
+	if app.ActiveEntry.EntryType != lunching {
+		t.Fatalf("lunch finish late, Entry type, got %v, want %v", app.ActiveEntry.EntryType, lunching)
+	}
+
+	entryType, err := app.stop()
+
+	//then
+	if err != nil {
+		t.Error(err)
+	}
+
+	if entryType != spending {
+		t.Errorf("lunch finish late, Entry type, got %v, want %v", entryType, spending)
+	}
+
+	if len(app.FinishedEntries) != 1 {
+		t.Errorf("lunch finish late, entries count, got %d, want 1", len(app.FinishedEntries))
+	}
+
+	entry := app.FinishedEntries[0]
+	var spendingSeconds float64 = (minutesAgo - 60) * 60
+	if !equals(entry.getDuration().Seconds(), spendingSeconds) {
+		t.Errorf("lunch finish late, duration, got %s, want an %f seconds", entry.getDuration(), spendingSeconds)
 	}
 }
 
