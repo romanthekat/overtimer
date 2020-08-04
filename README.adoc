@@ -25,6 +25,8 @@ overtime started at 2020-05-01T01:14:57+03:00
 
 * `overtimer routine` - add overtime or spending entry depending on current time in comparison with json settings of start/end work hour
 
+* `overtimer lunch` - start lunch session, `stop` will stop it, and add either overtime or spending of 60 minutes lunch (not) exceeded
+
 == build
 
 `go build github.com/EvilKhaosKat/overtimer`
