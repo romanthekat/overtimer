@@ -63,22 +63,22 @@ func (app *App) finishActive() (*FinishedEntry, error) {
 	activeEntry := app.ActiveEntry
 	if activeEntry != nil {
 		if activeEntry.EntryType == lunching { //TODO migrate this logic on type?
-			return app.finishLunching(activeEntry)
+			return app.finishLunching(activeEntry), nil
 		} else {
-			return app.finishGenericEntry(activeEntry)
+			return app.finishGenericEntry(activeEntry), nil
 		}
 	} else {
 		return nil, fmt.Errorf("no active entry found")
 	}
 }
 
-func (app *App) finishGenericEntry(activeEntry *Entry) (*FinishedEntry, error) {
+func (app *App) finishGenericEntry(activeEntry *Entry) *FinishedEntry {
 	finishedEntry := app.addEntry(activeEntry.EntryType, activeEntry.StartTime, time.Now())
 	app.ActiveEntry = nil
-	return finishedEntry, nil
+	return finishedEntry
 }
 
-func (app *App) finishLunching(activeEntry *Entry) (*FinishedEntry, error) {
+func (app *App) finishLunching(activeEntry *Entry) *FinishedEntry {
 	activeEntry = app.ActiveEntry
 	app.ActiveEntry = nil
 
@@ -88,9 +88,9 @@ func (app *App) finishLunching(activeEntry *Entry) (*FinishedEntry, error) {
 	lunchEndTime := activeEntry.StartTime.Add(1 * time.Hour)
 
 	if delta.Minutes() > 60 {
-		return app.addEntry(spending, lunchEndTime, now), nil
+		return app.addEntry(spending, lunchEndTime, now)
 	} else {
-		return app.addEntry(overtime, now, lunchEndTime), nil
+		return app.addEntry(overtime, now, lunchEndTime)
 	}
 }
 
@@ -105,10 +105,7 @@ func (app *App) spend() (bool, error) {
 		return false, nil
 	}
 
-	_, err := app.finishActive()
-	if err != nil {
-		return false, fmt.Errorf("error during spend command, finish active entry failed with %s", err)
-	}
+	app.finishActive()
 
 	app.ActiveEntry = newEntry(spending, time.Now())
 	return true, nil
