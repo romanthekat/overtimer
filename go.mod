@@ -1,3 +1,3 @@
-module github.com/EvilKhaosKat/overtimer
+module github.com/romanthekat/overtimer
 
-go 1.14
+go 1.15
