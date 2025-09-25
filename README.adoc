@@ -1,31 +1,21 @@
 = overtimer
 
 Simple CLI to track overtimes and spending this time.
-Keeps data in `overtimer.json` file.
+Keeps data in local `overtimer.json` file, including start/end working hour (9 and 18 by default).
 
 == commands
 
-* `overtimer status`/`overtimer` - show current status
+* `overtimer routine`: main command, use when you start or finish your workday
+- adds overtime or spending depending on current time against start/end work hour
+* `overtimer lunch`: start lunch.
+- calling `lunch` again or `stop` will add overtime or spending if 60-minute lunch was (not) exceeded
+* `overtimer` or `overtimer status`: show current statistic, amount of overtime or debt
 
-----
-overtime: 1h34m36s
-or
-debt: -1h36m37s
-----
+=== more direct control
 
-* `overtimer start` - start overtime
-
-----
-overtime started at 2020-05-01T01:14:57+03:00
-----
-
-* `overtimer spend` - start spending time
-
-* `overtimer stop` - stop overtime/spending time
-
-* `overtimer routine` - add overtime or spending entry depending on current time in comparison with json settings of start/end work hour
-
-* `overtimer lunch` - start lunch session, `stop` will stop it, and add either overtime or spending if 60 minutes lunch (not) exceeded
+* `overtimer start`: start overtime
+* `overtimer spend`: start spending time
+* `overtimer stop`: stop overtime/spending time
 
 == build
 

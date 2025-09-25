@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	DefaultWorkStartHour = 10
-	DefaultWorkEndHour   = 19
+	DefaultWorkStartHour = 9
+	DefaultWorkEndHour   = 18
 )
 
 type App struct {
@@ -86,7 +86,7 @@ func main() {
 		if started {
 			fmt.Println("lunch started at", nowTimeFormatted())
 		} else {
-			fmt.Println("lunch is already in progress")
+			fmt.Println("lunch stopped at", nowTimeFormatted())
 		}
 	default:
 		log.Fatal("unsupported command $s", command)

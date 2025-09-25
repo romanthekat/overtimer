@@ -145,11 +145,24 @@ func newDate(t time.Time, hour int) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), hour, 0, 0, 0, t.Location())
 }
 
+// TODO change API, return error
 func (app *App) lunch() bool {
 	if app.ActiveEntry == nil {
 		app.ActiveEntry = newEntry(lunching, time.Now())
 		return true
 	}
+
+	if app.ActiveEntry.EntryType == lunching {
+		_, err := app.stop()
+		if err != nil {
+			fmt.Printf("error: %s", err)
+			return false
+		}
+
+		return false
+	}
+
+	fmt.Printf("another activity is in progress, can't stop lunch: %s", app.ActiveEntry)
 
 	return false
 }
